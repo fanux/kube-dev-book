@@ -2,7 +2,7 @@
 《kubernetes开发指南》
 
 # 作者简介
-方海涛 sealos作者，五年以上容器平台与系统研发经验, 带领自研kubernetes CNI 对接ovn网络，动态本地存储CSI等。丰富的kubernetes源码阅读与定制扩展经验，融合默认调度器与深度学习批任务调度器。开源golang websocket框架lhttp, kubernetes管理平台fist等。
+方海涛 sealos作者，五年以上容器平台与系统研发经验, 自研kubernetes CNI 对接ovn网络，动态本地存储CSI等。丰富的kubernetes源码阅读与定制扩展经验，融合默认调度器与深度学习批任务调度器。开源golang websocket框架lhttp, kubernetes管理平台fist等。
 
 # 图书信息
 ## 选题背景,市场需求,产品定位
