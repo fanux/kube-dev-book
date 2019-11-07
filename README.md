@@ -13,28 +13,28 @@
 
 ## 大纲目录
 1. 开发环境与编译测试
-    1.1 编译kubernetes源码
-    1.2 CI/CD自动化编译源码
-    1.3 Makefile与编译脚本分析
+    1.1. 编译kubernetes源码
+    1.2. CI/CD自动化编译源码
+    1.3. Makefile与编译脚本分析
 2. client-go开发指南
-    2.1 环境构建
-    2.2 一个简单的示例
-    2.3 client-go架构分析
-    2.4 dynamic client
-    2.5 rest client
-    2.6 cache client
-    2.7 informal
+    2.1. 环境构建
+    2.2. 一个简单的示例
+    2.3. client-go架构分析
+    2.4. dynamic client
+    2.5. rest client
+    2.6. cache client
+    2.7. informal
 3. CRD与adminssion webhook开发
-    3.1 一个Cronjob示例
-    3.2 API版本
-    3.3 CRD编码
-        3.3.1 生成CRD
-        3.3.2 使用Finalizers
-        3.3.3 adminssion webhook
-        3.3.4 代码生成标记
-        3.3.5 contoller生成命令行工具
-        3.3.6 编写测试用例
-        3.3.7 metrics
+    3.1. 一个Cronjob示例
+    3.2. API版本
+    3.3. CRD编码
+        3.3.1. 生成CRD
+        3.3.2. 使用Finalizers
+        3.3.3. adminssion webhook
+        3.3.4. 代码生成标记
+        3.3.5. contoller生成命令行工具
+        3.3.6. 编写测试用例
+        3.3.7. metrics
 4. CRI实现
 5. CNI实现
 6. CSI实现
