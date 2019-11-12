@@ -25,7 +25,8 @@
   - 2.5. rest client
   - 2.6. cache client
   - 2.7. informal
-3. CRD与adminssion webhook开发
+
+第三章. CRD与adminssion webhook开发
   - 3.1. 一个Cronjob示例
   - 3.2. API版本
   - 3.3. CRD编码
@@ -36,18 +37,44 @@
       - 3.3.5. contoller生成命令行工具
       - 3.3.6. 编写测试用例
       - 3.3.7. metrics
-4. CRI实现
-5. CNI实现
-  - 4.1 CNI概览
-  - 4.2 CNI命令与参数
-  - 4.3 CNI命令返回值
-  - 4.4 网络配置参数
-  - 4.5 IP地址分配
-  - 4.6 动手实现CNI
-6. CSI实现
-7. 扩展apiserver
-8. 定制kube-sheduler
-9. 定制kubelet
+
+第四章. CRI实现
+  - 4.1. pod接口
+  - 4.2. 容器接口
+  - 4.3. 镜像接口
+  - 4.4. 实现一个简单的CRI
+
+第五章. CNI实现
+  - 5.1. CNI概览
+  - 5.2. CNI命令与参数
+  - 5.3. CNI命令返回值
+  - 5.4. 网络配置参数
+  - 5.5. IP地址分配
+  - 5.6. 动手实现CNI
+
+第六章. CSI实现
+  - 6.1. sidecar容器
+  - 6.2. CSI对象  
+  - 6.3. CSI特性
+  - 6.4. 部署CSI驱动
+  - 6.5. 测试驱动
+  - 6.7. 实现一个本地存储CSI
+
+第七章. 扩展apiserver
+  - 7.1. 认证模块
+  - 7.2. 授权模块
+  - 7.3. 准入控制
+  - 7.4. 聚合server
+  - 7.5. 存储接口
+
+第八章. 定制kube-sheduler
+  - 8.1 认识调度器cache
+  - 8.2 调度算法
+  - 8.3 预选与优选
+  - 8.4 调度队列
+  - 8.5 定制支持深度学习批任务
+
+第九章. 定制kubelet
 
 ## 本书特色
 > 全面
