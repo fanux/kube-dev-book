@@ -12,11 +12,11 @@
    kubernetes具备极强的扩展性，本书通过深入浅出的方式介绍如何开发kubernetes, 包含上层的client-go使用，CRD开发，adminssion webhook, 和底层三大接口实现开发（CNI CSI CRI），以及核心组件的定制，如定制调度器，apiserver,kubelet等。通过学习这些开发技巧能更深入的理解技术原理以及在系统之上实现我们自己想要的功能。
 
 ## 大纲目录
-1. 开发环境与编译测试
+第一章. 开发环境与编译测试
   - 1.1. 编译kubernetes源码
   - 1.2. CI/CD自动化编译源码
   - 1.3. Makefile与编译脚本分析
-2. client-go开发指南
+第二章. client-go开发指南
   - 2.1. 环境构建
   - 2.2. 一个简单的示例
   - 2.3. client-go架构分析
@@ -37,6 +37,12 @@
       - 3.3.7. metrics
 4. CRI实现
 5. CNI实现
+  - 4.1 CNI概览
+  - 4.2 CNI命令与参数
+  - 4.3 CNI命令返回值
+  - 4.4 网络配置参数
+  - 4.5 IP地址分配
+  - 4.6 动手实现CNI
 6. CSI实现
 7. 扩展apiserver
 8. 定制kube-sheduler
