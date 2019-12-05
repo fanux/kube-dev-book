@@ -1,0 +1,142 @@
+# 编译kubernetes源码
+定制kubernetes源码的前提是需要知道如何编译kubernetes,我们需要掌握编译整个工程以及编译脚本具体做了哪些事以及如何编译单个组件等
+
+## 1.1.1 宿主机编译
+编译kubernetes有两种方式，如果有golang环境可以这样进行编译：
+
+```go
+mkdir -p $GOPATH/src/k8s.io
+cd $GOPATH/src/k8s.io
+git clone https://github.com/kubernetes/kubernetes
+cd kubernetes
+make
+```
+
+## 1.1.2 在docker环境中编译
+或者在docker中进行编译，前提是已经安装了docker,在docker环境中编译非常简单，不用考虑安装一些依赖环境
+
+> 快速开始
+
+```go
+git clone https://github.com/kubernetes/kubernetes
+cd kubernetes
+make quick-release
+```
+
+> 前提条件
+
+* macOS上需要4.5G以上内存，否则编译可能容易出现失败
+* Linux上安装docker
+* 或者有一个远程的docker engine
+
+> 编译脚本介绍
+
+在 build/ 目录有如下几个比较重要的脚本
+
+* build/run.sh 在容器内执行一个命令
+    * `build/run.sh make` 仅编译linux二进制程序
+    * `build/run.sh make cross` 编译跨平台二进制程序
+    * `build/run.sh make kubectl KUBE_BUILD_PLATFORMS=darwin/amd64` 指定组件与平台编译
+    * `build/run.sh make test` 运行所有单元测试用例
+    * `build/run.sh make test-integration` 运行集成测试用例
+    * `build/run.sh make test-cmd` 运行命令行测试
+* build/copy-output.sh 此脚本会把docker中的 `_output/dockerized/bin` 拷贝到本地的 `_output/dockerized/bin`, 编译完的二进制同样在该目录，build/run.sh会自动调用这个脚本进行拷贝
+* build/make-clean.sh 清理_output目录
+* build/shell.sh 进入bash shell中进行编译
+
+> 编译环境介绍
+
+要了解k8s的编译环境最重要的就是解读编译环境的Dockerfile, 有两个Dockerfile,一个用于构建基本镜像，我们来选取其中一些重要的东西分析一下,为了便于阅读分成几段去看
+
+```
+FROM golang:1.13.4
+
+ENV GOARM 7
+ENV KUBE_DYNAMIC_CROSSPLATFORMS \
+  armhf \
+  arm64 \
+  s390x \
+  ppc64el
+
+ENV KUBE_CROSSPLATFORMS \
+  linux/386 \
+  linux/arm linux/arm64 \
+  linux/ppc64le \
+  linux/s390x \
+  darwin/amd64 darwin/386 \
+  windows/amd64 windows/386
+```
+选取一个golang的基础镜像，设置一些跨平台信息的环境变量
+
+```
+RUN for platform in ${KUBE_CROSSPLATFORMS}; do GOOS=${platform%/*} GOARCH=${platform##*/} go install std; done \
+    && go clean -cache
+```
+预编译go标准库，跨平台编译时需要依赖这块
+
+```
+RUN apt-get update \
+  && apt-get install -y rsync jq apt-utils file patch unzip \
+  && apt-get clean && rm -rf /var/lib/apt/lists/*
+```
+安装依赖工具，这里注意依赖了rsync用于拷贝编译产物
+
+```
+RUN echo "deb http://archive.ubuntu.com/ubuntu xenial main universe" > /etc/apt/sources.list.d/cgocrosscompiling.list \
+  && apt-key adv --no-tty --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5 3B4FE6ACC0B21F32 \
+  && apt-get update \
+  && apt-get install -y build-essential \
+  && for platform in ${KUBE_DYNAMIC_CROSSPLATFORMS}; do apt-get install -y crossbuild-essential-${platform}; done \
+  && apt-get clean && rm -rf /var/lib/apt/lists/*
+```
+安装各个平台的build-essential
+
+```
+RUN PROTOBUF_VERSION=3.0.2; ZIPNAME="protoc-${PROTOBUF_VERSION}-linux-x86_64.zip"; \
+  mkdir /tmp/protoc && cd /tmp/protoc \
+  && wget "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_VERSION}/${ZIPNAME}" \
+  && unzip "${ZIPNAME}" \
+  && chmod -R +rX /tmp/protoc \
+  && cp -pr bin /usr/local \
+  && cp -pr include /usr/local \
+  && rm -rf /tmp/protoc \
+  && protoc --version
+```
+安装protobuf,核心组件之间几乎都是通过proto进行通信
+
+```
+RUN go get golang.org/x/tools/cmd/cover \
+           golang.org/x/tools/cmd/goimports \
+    && go clean -cache
+```
+cover是测试覆盖度工具，goimports是包导入工具
+
+```
+RUN export ETCD_VERSION=v3.2.24; \
+  mkdir -p /usr/local/src/etcd \
+  && cd /usr/local/src/etcd \
+  && curl -fsSL https://github.com/coreos/etcd/releases/download/${ETCD_VERSION}/etcd-${ETCD_VERSION}-linux-amd64.tar.gz | tar -xz \
+  && ln -s ../src/etcd/etcd-${ETCD_VERSION}-linux-amd64/etcd /usr/local/bin/
+```
+最后跑测试时需要用到etcd
+
+以上是基础镜像的核心内容, 上层镜像是一些比较简单的内容这里就不进行分析了,读者可自行到源码的 build/build-image 目录找到
+
+> 发布
+
+`build/release.sh`脚本用于发布包, 编译二进制程序，跑测试用例和build运行时的Docker镜像
+
+会输出kubernetes.tar.gz文件包含：
+
+* 交叉编译的客户端工具
+* 在不同平台运行的选择脚本
+* 例子
+* 各种云上部署集群的脚本
+* 所有二进制程序tar包
+
+还会创建一些额外的压缩包
+
+* kubernetes-client-*.tar.gz 指定平台客户端二进制
+* kubernetes-server-*.tar.gz 指定平台服务端二进制
+
+会先输出到 _output/release-stage 目录然后打包到 _output/release-tars 目录
