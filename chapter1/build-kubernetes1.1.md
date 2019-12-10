@@ -2,6 +2,14 @@
 定制kubernetes源码的前提是需要知道如何编译kubernetes,我们需要掌握编译整个工程以及编译脚本具体做了哪些事以及如何编译单个组件等
 
 ## 1.1.1 宿主机编译
+笔者更推荐的还是在docker中进行编译，这样一致性比较好且比较容易复用
+
+> 安装依赖
+
+* GNU tools
+* rsync
+* golang
+
 编译kubernetes有两种方式，如果有golang环境可以这样进行编译：
 
 ```go
@@ -10,6 +18,73 @@ cd $GOPATH/src/k8s.io
 git clone https://github.com/kubernetes/kubernetes
 cd kubernetes
 make
+```
+
+> 快速开始
+
+编译指定的某个组件
+```
+make WHAT=cmd/{$package_you_want}
+# 如编译kubelet
+make WHAT=cmd/kubelet
+```
+
+编译结束会输出到`_output/bin`目录
+
+跨平台编译：
+```
+make cross
+```
+
+> 安装etcd
+
+```
+cd $working_dir/kubernetes
+
+# Installs in ./third_party/etcd
+hack/install-etcd.sh
+
+# Add to PATH
+echo export PATH="\$PATH:$working_dir/kubernetes/third_party/etcd" >> ~/.profile
+```
+
+> 测试
+
+```
+cd $working_dir/kubernetes
+```
+
+执行一些校验操作如
+
+hack/update-gofmt.sh 确定所有文件都被格式化
+hack/update-bazel.sh 更新bazel编译依赖的文件
+```
+make verify
+```
+
+或者去执行所有的更新脚本
+```
+make update
+```
+
+执行单元测试用例
+```
+make test
+```
+
+执行特定的测试用例
+```
+make test WHAT=./pkg/api/helper GOFLAGS=-v
+```
+
+集成测试，需要依赖etcd
+```
+make test-integration
+```
+
+端到端测试，会创建集群，跑测试用例，删除集群，全部跑完很耗时间，运行指定的测试用例访问此链接./e2e-tests.md#building-kubernetes-and-running-the-tests
+```
+make test-e2e
 ```
 
 ## 1.1.2 在docker环境中编译
@@ -140,3 +215,65 @@ RUN export ETCD_VERSION=v3.2.24; \
 * kubernetes-server-*.tar.gz 指定平台服务端二进制
 
 会先输出到 _output/release-stage 目录然后打包到 _output/release-tars 目录
+
+## 1.1.3 实践
+接下来以在linux环境下Docker中编译为例子来讲解下如何编译kubeadm
+
+> 安装git docker
+
+```
+yum install -y docker git
+```
+
+> clone 代码
+
+```
+git clone https://github.com/kubernetes/kubernetes
+```
+
+> build编译环境docker镜像
+
+官方镜像非常大，build传输都非常麻烦，这里精简了一个Dockerfile：
+
+```
+mkdir build && cd build
+
+cat <<EOF > FROM golang:1.13.4
+
+RUN apt-get update \
+  && apt-get install -y rsync jq apt-utils file patch unzip \
+  && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN PROTOBUF_VERSION=3.0.2; ZIPNAME="protoc-${PROTOBUF_VERSION}-linux-x86_64.zip"; \
+  mkdir /tmp/protoc && cd /tmp/protoc \
+  && wget "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_VERSION}/${ZIPNAME}" \
+  && unzip "${ZIPNAME}" \
+  && chmod -R +rX /tmp/protoc \
+  && cp -pr bin /usr/local \
+  && cp -pr include /usr/local \
+  && rm -rf /tmp/protoc \
+  && protoc --version
+
+RUN go get golang.org/x/tools/cmd/cover \
+           golang.org/x/tools/cmd/goimports \
+    && go clean -cache
+EOF
+
+docker build -t kube-build:alpine .
+```
+
+> 编译源代码
+
+这里把源代码挂载到容器中，方便在修改代码和编译
+```
+docker run -v /root/kubernetes:/go/src/k8s.io/kubernetes -w /go/src/k8s.io/kubernetes \
+    kube-build:alpine KUBE_GIT_TREE_STATE="clean" KUBE_GIT_VERSION=v1.17.0 KUBE_BUILD_PLATFORMS=linux/amd64 \
+    make all WHAT=cmd/kubeadm GOFLAGS=-v
+```
+KUBE_GIT_VERSION 环境变量是需要的，否则编译出来的二进制文件没有版本信息，会无法正常工作
+KUBE_BUILD_PLATFORMS 指定平台
+
+编译结束后ouput目录就能看到编译出来的bin文件了
+```
+ls  _output/bin/
+```
