@@ -13,7 +13,7 @@
 
 ## 大纲目录
 第一章. 开发环境与编译测试
-  - 1.1. 编译kubernetes源码
+  - 1.1. [编译kubernetes源码](/chapter1/build-kubernetes1.1.md)
   - 1.2. CI/CD自动化编译源码
   - 1.3. Makefile与编译脚本分析
 
