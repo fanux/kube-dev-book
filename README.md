@@ -24,7 +24,7 @@
   - 2.4. dynamic client
   - 2.5. rest client
   - 2.6. cache client
-  - 2.7. informal
+  - 2.7. informer
 
 第三章. CRD与adminssion webhook开发
   - 3.1. 一个Cronjob示例
@@ -97,7 +97,7 @@
 
 读完本书读者应当掌握以下内容：
 
-1. 熟练使用client-go进行上层开发，理解client中的cache informer等原理
+1. 熟练使用client-go进行上层开发，理解client中的cache informal等原理
 2. 熟悉CRD adminsion webhook开发，并深入掌握一个CRD框架的使用与原理
 3. 熟悉各核心组建的原理并理解整体框架，具备扩展任何一个核心组件的能力，理解核心组件中的“套路”，以不变应万变
 4. 掌握自研CNI CSI CRI的能力
