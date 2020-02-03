@@ -15,7 +15,7 @@
 第一章. 开发环境与编译测试
   - 1.1. [编译kubernetes源码](/chapter1/build-kubernetes1.1.md)
   - 1.2. CI/CD自动化编译源码
-  - 1.3. Makefile与编译脚本分析
+  - 1.3. [Makefile与编译脚本分析](/chapter1/1.3-makefile.md)
 
 第二章. client-go开发指南
   - 2.1. 环境构建
