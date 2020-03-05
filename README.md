@@ -13,13 +13,13 @@
 
 ## 大纲目录
 第一章. 开发环境与编译测试
-  - 1.1. [编译kubernetes源码](/chapter1/build-kubernetes1.1.md)
+  - 1.1. [编译kubernetes源码](/chapter1/1.1-build-kubernetes.md)
   - 1.2. CI/CD自动化编译源码
   - 1.3. [Makefile与编译脚本分析](/chapter1/1.3-makefile.md)
 
 第二章. client-go开发指南
-  - 2.1. 环境构建
-  - 2.2. 一个简单的示例
+  - 2.1. [环境构建](/chapter2/2.1-dev-env.md)
+  - 2.2. [一个简单的示例](/chapter2/2.2-examples.md)
   - 2.3. client-go架构分析
   - 2.4. dynamic client
   - 2.5. rest client
