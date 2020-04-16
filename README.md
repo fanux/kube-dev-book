@@ -20,11 +20,12 @@
 第二章. client-go开发指南
   - 2.1. [环境构建](/chapter2/2.1-dev-env.md)
   - 2.2. [一个简单的示例](/chapter2/2.2-examples.md)
-  - 2.3. client-go架构分析
-  - 2.4. dynamic client
-  - 2.5. rest client
-  - 2.6. cache client
-  - 2.7. informer
+  - 2.3. [认识证书与kubeconfig](/chapter2/2.3-certs-and-kubeconfig.md)
+  - 2.4. client-go架构分析
+  - 2.5. dynamic client
+  - 2.6. rest client
+  - 2.7. cache client
+  - 2.8. informer
 
 第三章. CRD与adminssion webhook开发
   - 3.1. 一个Cronjob示例
