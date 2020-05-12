@@ -33,11 +33,12 @@
   - 3.3. CRD编码
       - 3.3.1. 生成CRD
       - 3.3.2. 使用Finalizers
-      - 3.3.3. adminssion webhook
-      - 3.3.4. 代码生成标记
-      - 3.3.5. contoller生成命令行工具
-      - 3.3.6. 编写测试用例
-      - 3.3.7. metrics
+      - 3.3.3. [admission controller原理](/chapter3/3.3.3-admission-controller.md)
+      - 3.3.4. admission webhook
+      - 3.3.5. 代码生成标记
+      - 3.3.6. contoller生成命令行工具
+      - 3.3.7. 编写测试用例
+      - 3.3.8. metrics
 
 第四章. CRI实现
   - 4.1. pod接口
